@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration</title>
+<link rel="stylesheet" href="registration.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- STEP 1 -->
+    <div class="form-step active" id="step1">
+        <h2>Register</h2>
+
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="mobile" placeholder="Mobile Number">
+        <input type="email" id="email" placeholder="Email Address">
+
+        <button onclick="nextStep()">Continue</button>
+    </div>
+
+    <!-- STEP 2 (UPDATED) -->
+    <div class="form-step" id="step2">
+        <h2>Your Fitness Details</h2>
+
+        <div class="icon-row">
+            <div class="icon-box">
+                <label>Weight (kg)</label>
+                <input type="number" id="weight">
+            </div>
+
+            <div class="icon-box">
+                <label>Height (cm)</label>
+                <input type="number" id="height">
+            </div>
+        </div>
+
+        <div class="icon-row">
+            <div class="icon-box">
+                <label>Age</label>
+                <input type="number" id="age">
+            </div>
+
+            <div class="icon-box">
+                <label>Your BMI</label>
+                <input type="number" id="bmi" readonly>
+            </div>
+        </div>
+
+        <div class="icon-row">
+            <div class="icon-box">
+                <label>Your Goal Body Type</label>
+                <select id="bodyType">
+                    <option value="">Select</option>
+                    <option>Aesthetic</option>
+                    <option>Bodybuilding</option>
+                    <option>Strength Gain</option>
+                    <option>Weight Loss</option>
+                    <option>Weight Gain</option>
+                    <option>Mens Physique</option>
+                </select>
+            </div>
+
+            <div class="icon-box">
+                <label>Exercise Regularly</label>
+                <select id="exercise">
+                    <option value="">Select</option>
+                    <option>Light</option>
+                    <option>Moderate</option>
+                    <option>Heavy</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="icon-box wide">
+            <label>Suggestion (Auto Based on BMI)</label>
+            <input type="text" id="suggestion" readonly>
+        </div>
+
+        <button onclick="finish()">Register</button>
+    </div>
+
+</div>
+
+<script src="registration.js"></script>
+</body>
+</html>
+
+
+
+
+
