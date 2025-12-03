@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f5f5f5;
+    }
+
+    .login-box {
+        width: 350px;
+        background: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        border: none;
+        background: #ff5722;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="login-box">
+    <h2>Login</h2>
+
+    <input type="text" id="loginName" placeholder="Enter Your Name">
+    <input type="text" id="loginMobile" placeholder="Enter Mobile Number">
+
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <input type="text" id="loginOTP" class="hidden" placeholder="Enter OTP">
+
+    <button id="verifyBtn" class="hidden" onclick="verifyOTP()">Verify OTP</button>
+</div>
+
+<script>
+let generatedOTP = "";
+
+// SEND OTP
+function sendOTP() {
+    let name = document.getElementById("loginName").value;
+    let mobile = document.getElementById("loginMobile").value;
+
+    if (!name || !mobile) {
+        alert("Please enter Name and Mobile Number");
+        return;
+    }
+
+    if (mobile.length !== 10 || isNaN(mobile)) {
+        alert("Enter a valid 10-digit mobile number");
+        return;
+    }
+
+    // Generate Fake OTP
+    generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+    alert("Your OTP is: " + generatedOTP + " (Demo)");
+
+    // Show OTP Field
+    document.getElementById("loginOTP").classList.remove("hidden");
+    document.getElementById("verifyBtn").classList.remove("hidden");
+}
+
+// VERIFY OTP
+function verifyOTP() {
+    let otp = document.getElementById("loginOTP").value;
+
+    if (otp === generatedOTP) {
+        alert("OTP Verified Successfully!");
+
+        // Redirect to registration page (step1)
+        window.location.href = "register.html";
+    } else {
+        alert("Incorrect OTP. Please try again.");
+    }
+}
+</script>
+
+</body>
+</html>
