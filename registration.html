@@ -4,94 +4,119 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registration</title>
-<link rel="stylesheet" href="registration.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+body {
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+.container { width:100%; max-width:400px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; color:white; }
+input, select, button {
+    width:100%; padding:10px; margin:10px 0; border-radius:8px; border:none;
+}
+button { background:#00eaff; color:#000; cursor:pointer; font-weight:bold; }
+button:hover { background:#00c4d1; }
+.suggestion { background: rgba(255,255,255,0.15); padding:10px; border-radius:8px; text-align:center; color:#fff; margin-top:-5px; }
+</style>
 </head>
 <body>
 
 <div class="container">
-
-    <!-- STEP 1 -->
-    <div class="form-step active" id="step1">
-        <h2>Register</h2>
-
-        <input type="text" id="name" placeholder="Full Name">
-        <input type="text" id="mobile" placeholder="Mobile Number">
-        <input type="email" id="email" placeholder="Email Address">
-
-        <button onclick="nextStep()">Continue</button>
-    </div>
-    <a href="login.html">already a user,click here to login</a>
-
-    <!-- STEP 2 (UPDATED) -->
-    <div class="form-step" id="step2">
-        <h2>Your Fitness Details</h2>
-
-        <div class="icon-row">
-            <div class="icon-box">
-                <label>Weight (kg)</label>
-                <input type="number" id="weight">
-            </div>
-
-            <div class="icon-box">
-                <label>Height (cm)</label>
-                <input type="number" id="height">
-            </div>
-        </div>
-
-        <div class="icon-row">
-            <div class="icon-box">
-                <label>Age</label>
-                <input type="number" id="age">
-            </div>
-
-            <div class="icon-box">
-                <label>Your BMI</label>
-                <input type="number" id="bmi" readonly>
-            </div>
-        </div>
-
-        <div class="icon-row">
-            <div class="icon-box">
-                <label>Your Goal Body Type</label>
-                <select id="bodyType">
-                    <option value="">Select</option>
-                    <option>Aesthetic</option>
-                    <option>Bodybuilding</option>
-                    <option>Strength Gain</option>
-                    <option>Weight Loss</option>
-                    <option>Weight Gain</option>
-                    <option>Mens Physique</option>
-                </select>
-            </div>
-
-            <div class="icon-box">
-                <label>Exercise Regularly</label>
-                <select id="exercise">
-                    <option value="">Select</option>
-                    <option>Light</option>
-                    <option>Moderate</option>
-                    <option>Heavy</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="icon-box wide">
-            <label>Suggestion (Auto Based on BMI)</label>
-            <input type="text" id="suggestion" readonly>
-        </div>
-
-        <button onclick="finish()">Register</button>
-       
+    <h2>Register</h2>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="mobile" placeholder="Mobile Number" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="number" id="age" placeholder="Age">
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <input type="number" id="bmi" placeholder="BMI" readonly>
+    <div class="suggestion" id="bmiSuggestion"></div>
+    <select id="bodyType">
+        <option value="">Select Body Type</option>
+        <option>Aesthetic</option>
+        <option>Bodybuilding</option>
+        <option>Strength Gain</option>
+        <option>Weight Loss</option>
+        <option>Weight Gain</option>
+        <option>Mens Physique</option>
+    </select>
+    <select id="exercise">
+        <option value="">Select Exercise Level</option>
+        <option>Light</option>
+        <option>Moderate</option>
+        <option>Heavy</option>
+    </select>
+    <button onclick="register()">Register</button>
+    <p style="text-align:center; margin-top:10px;">
+        Already a user? <a href="login.html" style="color:#00eaff;">Login here</a>
+    </p>
 </div>
 
+<script>
+function calculateBMI() {
+    let weight = parseFloat(document.getElementById("weight").value);
+    let height = parseFloat(document.getElementById("height").value);
 
+    if(weight > 0 && height > 0){
+        let bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+        document.getElementById("bmi").value = bmi;
+        generateBMISuggestion(bmi);
+    } else {
+        document.getElementById("bmi").value = '';
+        document.getElementById("bmiSuggestion").innerText = '';
+    }
+}
 
-    </div>
+// Generate BMI suggestion
+function generateBMISuggestion(bmi) {
+    let suggestion = "";
+    if(bmi < 18.5) suggestion = "Underweight → Recommended: Weight Gain";
+    else if(bmi < 25) suggestion = "Normal → Maintain or Build Aesthetic Physique";
+    else if(bmi < 30) suggestion = "Overweight → Recommended: Weight Loss";
+    else suggestion = "Obese → Strongly Recommended: Weight Loss";
 
-</div>
+    document.getElementById("bmiSuggestion").innerText = suggestion;
+}
 
+// Auto calculate BMI on weight or height change
+document.getElementById("weight").addEventListener("input", calculateBMI);
+document.getElementById("height").addEventListener("input", calculateBMI);
 
-<script src="registration.js"></script>
+function register() {
+    let name = document.getElementById("name").value.trim();
+    let mobile = document.getElementById("mobile").value.trim();
+    let email = document.getElementById("email").value.trim();
+
+    if(!name || !mobile || !email){
+        alert("Please fill name, mobile, and email.");
+        return;
+    }
+
+    const userData = {
+        name: name,
+        mobile: mobile,
+        email: email,
+        age: document.getElementById("age").value,
+        weight: document.getElementById("weight").value,
+        height: document.getElementById("height").value,
+        bmi: document.getElementById("bmi").value,
+        bmiSuggestion: document.getElementById("bmiSuggestion").innerText,
+        bodyType: document.getElementById("bodyType").value,
+        exercise: document.getElementById("exercise").value
+    };
+
+    // Save in localStorage (temporary storage for demo)
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    alert("Registration Successful!");
+    window.location.href = "login.html"; // Redirect to login page
+}
+</script>
+
 </body>
 </html>
 
