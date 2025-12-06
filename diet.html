@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diet Planning</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+body {
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:20px;
+    color:white;
+}
+.container { width:100%; max-width:700px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; margin-top:20px; }
+h2 { text-align:center; margin-bottom:20px; }
+.card { background: rgba(255,255,255,0.15); padding:20px; margin:15px 0; border-radius:10px; }
+.card h3 { margin-bottom:10px; }
+select, button { padding:10px; margin-top:10px; border-radius:8px; border:none; }
+button { background:#00eaff; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { background:#00c4d1; }
+ul { list-style:none; margin-left:0; padding-left:0; }
+li { margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Diet Planning</h2>
+
+    <div class="card">
+        <h3>Filter Meals</h3>
+        <label for="country">Select Country:</label>
+        <select id="country">
+            <option value="">--Select--</option>
+            <option value="India">India</option>
+            <option value="USA">USA</option>
+            <option value="Italy">Italy</option>
+            <option value="Japan">Japan</option>
+        </select>
+
+        <label for="diet">Diet Preference:</label>
+        <select id="diet">
+            <option value="">--Select--</option>
+            <option value="Veg">Veg</option>
+            <option value="Non-Veg">Non-Veg</option>
+        </select>
+
+        <button onclick="showMeals()">Show Meals</button>
+    </div>
+
+    <div class="card">
+        <h3>Meals</h3>
+        <ul id="mealList">
+            <!-- Meals will appear here -->
+        </ul>
+    </div>
+
+    <button onclick="location.href='home.html'">Back to Home</button>
+</div>
+
+<script>
+// Sample meals data
+const mealsData = {
+    "India": {
+        "Veg": ["Paneer Butter Masala", "Dal Tadka", "Vegetable Biryani", "Chole"],
+        "Non-Veg": ["Chicken Curry", "Mutton Biryani", "Fish Fry", "Egg Curry"]
+    },
+    "USA": {
+        "Veg": ["Veggie Burger", "Caesar Salad", "Mac & Cheese", "Grilled Veg Sandwich"],
+        "Non-Veg": ["Burger with Beef", "BBQ Ribs", "Fried Chicken", "Steak"]
+    },
+    "Italy": {
+        "Veg": ["Margherita Pizza", "Pasta Primavera", "Caprese Salad", "Risotto Veg"],
+        "Non-Veg": ["Spaghetti Bolognese", "Chicken Alfredo", "Seafood Risotto", "Prosciutto Pizza"]
+    },
+    "Japan": {
+        "Veg": ["Vegetable Sushi", "Tofu Salad", "Veg Ramen", "Tempura Veggies"],
+        "Non-Veg": ["Sushi with Fish", "Chicken Teriyaki", "Beef Bowl", "Shrimp Tempura"]
+    }
+};
+
+function showMeals() {
+    const country = document.getElementById("country").value;
+    const diet = document.getElementById("diet").value;
+    const mealList = document.getElementById("mealList");
+
+    mealList.innerHTML = "";
+
+    if (!country || !diet) {
+        alert("Please select both country and diet preference");
+        return;
+    }
+
+    const meals = mealsData[country][diet];
+
+    meals.forEach(meal => {
+        const li = document.createElement("li");
+        li.textContent = "• " + meal;
+        mealList.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>

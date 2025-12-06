@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercise Planning</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+body {
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:20px;
+    color:white;
+}
+.container { width:100%; max-width:700px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; margin-top:20px; }
+h2, h3 { text-align:center; margin-bottom:15px; }
+.card { background: rgba(255,255,255,0.15); padding:20px; margin:15px 0; border-radius:10px; }
+ul { list-style:none; padding-left:0; }
+li { margin-bottom:8px; }
+button { padding:10px; margin-top:10px; border:none; border-radius:8px; background:#00eaff; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { background:#00c4d1; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Exercise Planning</h2>
+    
+    <div class="card">
+        <h3>Today's Suggested Exercises</h3>
+        <p><strong>Goal:</strong> <span id="userGoal"></span></p>
+
+        <h4>Strength Training</h4>
+        <ul id="strengthList"></ul>
+
+        <h4>Cardio</h4>
+        <ul id="cardioList"></ul>
+    </div>
+
+    <button onclick="location.href='home.html'">Back to Home</button>
+</div>
+
+<script>
+// Example exercises based on goal
+const exerciseData = {
+    "Aesthetic": {
+        "Strength": ["Bench Press - 4x10", "Dumbbell Fly - 3x12", "Squats - 4x12", "Pull Ups - 3x8"],
+        "Cardio": ["Treadmill 20 mins", "Jump Rope 10 mins"]
+    },
+    "Bodybuilding": {
+        "Strength": ["Deadlift - 4x8", "Incline Bench Press - 4x10", "Barbell Row - 4x10", "Leg Press - 4x12"],
+        "Cardio": ["Stationary Bike 15 mins"]
+    },
+    "Strength Gain": {
+        "Strength": ["Squat - 5x5", "Deadlift - 5x5", "Overhead Press - 5x5", "Chin Ups - 4x8"],
+        "Cardio": ["Rowing Machine 10 mins"]
+    },
+    "Weight Loss": {
+        "Strength": ["Bodyweight Squats - 3x15", "Push Ups - 3x12", "Lunges - 3x12", "Plank 60s"],
+        "Cardio": ["Running 30 mins", "Cycling 20 mins", "Jump Rope 10 mins"]
+    },
+    "Weight Gain": {
+        "Strength": ["Bench Press - 4x10", "Deadlift - 4x8", "Squats - 4x10", "Pull Ups - 3x10"],
+        "Cardio": ["Light Jog 10 mins"]
+    },
+    "Mens Physique": {
+        "Strength": ["Incline Dumbbell Press - 4x12", "Lat Pulldown - 4x10", "Leg Curls - 3x12", "Bicep Curl - 3x15"],
+        "Cardio": ["Elliptical 15 mins", "Running 20 mins"]
+    }
+};
+
+// Get user's goal from localStorage (set in registration page)
+const userGoal = localStorage.getItem("userGoal") || "Weight Loss"; // default
+
+document.getElementById("userGoal").textContent = userGoal;
+
+// Display exercises based on goal
+function displayExercises(goal) {
+    const strengthList = document.getElementById("strengthList");
+    const cardioList = document.getElementById("cardioList");
+
+    strengthList.innerHTML = "";
+    cardioList.innerHTML = "";
+
+    if (!exerciseData[goal]) return;
+
+    exerciseData[goal]["Strength"].forEach(ex => {
+        const li = document.createElement("li");
+        li.textContent = ex;
+        strengthList.appendChild(li);
+    });
+
+    exerciseData[goal]["Cardio"].forEach(ex => {
+        const li = document.createElement("li");
+        li.textContent = ex;
+        cardioList.appendChild(li);
+    });
+}
+
+// Initialize
+displayExercises(userGoal);
+</script>
+
+</body>
+</html>
