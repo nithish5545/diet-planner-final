@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home</title>
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
-body {
-    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+
+/* 🔒 BACKGROUND UNCHANGED */
+body{
+    background: linear-gradient(135deg,#0d0d0d,#1a1a1a,#3b3b3b);
     min-height:100vh;
     display:flex;
     justify-content:center;
@@ -15,77 +18,247 @@ body {
     padding:20px;
     color:white;
 }
-.container { width:100%; max-width:600px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; }
-h2 { text-align:center; margin-bottom:20px; }
-.card { background: rgba(255,255,255,0.15); padding:20px; margin:15px 0; border-radius:10px; }
-.card h3 { margin-bottom:10px; }
-.buttons { display:flex; justify-content:space-around; margin-top:20px; }
-button { padding:15px; border:none; border-radius:10px; cursor:pointer; background:#00eaff; color:#000; font-weight:bold; transition:0.3s; }
-button:hover { background:#00c4d1; }
-.goal { background: rgba(255,255,255,0.2); padding:15px; margin-top:10px; border-radius:10px; }
+
+.container{
+    max-width:650px;
+    width:100%;
+    background:rgba(255,255,255,0.1);
+    padding:25px;
+    border-radius:15px;
+}
+
+h2{text-align:center;margin-bottom:15px}
+.card{
+    background:rgba(255,255,255,0.15);
+    padding:20px;
+    margin:15px 0;
+    border-radius:12px;
+}
+
+/* 💧 WATER */
+.glass-container{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+}
+
+.glass{
+    width:55px;
+    height:90px;
+    border:2px solid #00eaff;
+    border-radius:0 0 10px 10px;
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.water{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:0%;
+    background:linear-gradient(180deg,#00eaff,#007b8f);
+    transition:height 0.6s ease;
+}
+
+.glass.filled .water{height:100%}
+
+/* +250 ml popup */
+#waterPopup{
+    text-align:center;
+    margin-top:8px;
+    font-weight:bold;
+    color:#00eaff;
+    opacity:0;
+}
+
+@keyframes floatUp{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(-10px)}
+}
+
+/* 🎉 */
+.celebrate{
+    display:none;
+    text-align:center;
+    margin-top:15px;
+    animation:pop 0.7s infinite alternate;
+}
+@keyframes pop{to{transform:scale(1.1)}}
+
+/* 🏋️ WORKOUT */
+.tick{
+    display:block;
+    margin:8px 0;
+    cursor:pointer;
+}
+.tick input{margin-right:8px;transform:scale(1.2)}
+
+/* 📊 CHART */
+canvas{width:100%;background:rgba(0,0,0,0.2);border-radius:8px}
+
+/* 🔘 BUTTONS */
+.buttons{
+    display:flex;
+    justify-content:space-around;
+    margin-top:15px;
+}
+button{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00eaff;
+    font-weight:bold;
+    cursor:pointer;
+}
 </style>
 </head>
+
 <body>
-
 <div class="container">
-    <h2>Welcome, <span id="userName"></span>!</h2>
+<h2>Welcome, <span id="userName"></span> 👋</h2>
 
-    <div class="card">
-        <h3>Today's Goal</h3>
-        <div class="goal" id="todayGoal">Loading...</div>
-    </div>
+<!-- 💧 WATER -->
+<div class="card">
+<h3>💧 Water Intake</h3>
+<p style="text-align:center">Tap glass • 250 ml • Goal 2000 ml</p>
 
-    <div class="card">
-        <h3>Weekly Goal</h3>
-        <div class="goal" id="weeklyGoal">Loading...</div>
-    </div>
+<div class="glass-container" id="glassContainer"></div>
 
-    <div class="buttons">
-        <button onclick="location.href='exercise.html'">Exercise Planning</button>
-        <button onclick="location.href='diet.html'">Diet Planning</button>
-        <button onclick="location.href='about.html'">About Us</button>
-    </div>
+<p style="text-align:center;margin-top:10px">
+Drank: <b><span id="waterAmount">0</span> ml</b>
+</p>
+
+<div id="waterPopup">+250 ml 💧</div>
+
+<div class="celebrate" id="celebrate">
+<h3>🎉 Hydration Goal Completed!</h3>
+</div>
+</div>
+
+<!-- 🏋️ WORKOUT -->
+<div class="card">
+<h3>🏋️ Today’s Workout</h3>
+
+<div id="workoutPlan">
+<label class="tick"><input type="checkbox" onchange="updateWorkout()"> Push-ups (3×15)</label>
+<label class="tick"><input type="checkbox" onchange="updateWorkout()"> Squats (3×20)</label>
+<label class="tick"><input type="checkbox" onchange="updateWorkout()"> Cardio (20 min)</label>
+<label class="tick"><input type="checkbox" onchange="updateWorkout()"> Stretching (10 min)</label>
+</div>
+
+<p style="text-align:center;margin-top:10px">
+Completed: <b><span id="workoutCount">0</span>/4</b>
+</p>
+</div>
+
+<!-- 📊 WEEKLY -->
+<div class="card">
+<h3>📊 Weekly Workout Progress</h3>
+<canvas id="weeklyChart" width="320" height="180"></canvas>
+</div>
+
+<div class="buttons">
+<button onclick="location.href='exercise.html'">Exercise</button>
+<button onclick="location.href='diet.html'">Diet</button>
+<button onclick="location.href='about.html'">About</button>
+</div>
 </div>
 
 <script>
-// Fetch user data from localStorage
-const userData = JSON.parse(localStorage.getItem("userData"));
+/* USER */
+const userData = JSON.parse(localStorage.getItem("userData")) || {};
+userName.innerText = userData.name || "User";
 
-if(userData){
-    document.getElementById("userName").innerText = userData.name || "User";
+/* 💧 WATER */
+const TOTAL_GLASSES = 8;
+const GLASS_ML = 250;
+const today = new Date().toDateString();
 
-    // ---------------------- Today's Goal ----------------------
-    let todayGoal = "";
-    const bmi = parseFloat(userData.bmi);
-    const weight = parseFloat(userData.weight);
+if(localStorage.getItem("waterDate") !== today){
+    localStorage.setItem("waterCount", 0);
+    localStorage.setItem("waterDate", today);
+}
 
-    // Basic water, steps, calories (example values)
-    const waterIntake = 2.5; // liters
-    const steps = 8000; // steps
-    const caloriesBurned = 450; // kcal
+let filled = parseInt(localStorage.getItem("waterCount")) || 0;
 
-    if(bmi < 18.5) todayGoal = `Focus on weight gain exercises and high-calorie diet.\nWater Intake: ${waterIntake}L\nSteps: ${steps}\nCalories Burned: ${caloriesBurned} kcal`;
-    else if(bmi < 25) todayGoal = `Maintain your current fitness level.\nWater Intake: ${waterIntake}L\nSteps: ${steps}\nCalories Burned: ${caloriesBurned} kcal`;
-    else if(bmi < 30) todayGoal = `Focus on fat loss exercises and balanced diet.\nWater Intake: ${waterIntake}L\nSteps: ${steps}\nCalories Burned: ${caloriesBurned} kcal`;
-    else todayGoal = `Start a strict weight loss plan with cardio and diet control.\nWater Intake: ${waterIntake}L\nSteps: ${steps}\nCalories Burned: ${caloriesBurned} kcal`;
+// Create glasses
+glassContainer.innerHTML = "";
+for(let i=0;i<TOTAL_GLASSES;i++){
+    const g = document.createElement("div");
+    g.className = "glass";
+    const w = document.createElement("div");
+    w.className = "water";
+    g.appendChild(w);
+    if(i<filled) g.classList.add("filled");
+    glassContainer.appendChild(g);
+}
 
-    document.getElementById("todayGoal").innerText = todayGoal;
+function updateWaterText(){
+    waterAmount.innerText = filled * GLASS_ML;
+    celebrate.style.display = filled === TOTAL_GLASSES ? "block" : "none";
+}
+updateWaterText();
 
-    // ---------------------- Weekly Goal ----------------------
-    let weeklyGoal = "";
-    const weightTarget = parseFloat(userData.targetWeight || weight); // target weight from registration (optional)
-    let weightDiff = weightTarget - weight;
-    if(weightDiff > 0) weeklyGoal = `Goal: Gain ${weightDiff.toFixed(1)} kg this week. Focus on high-calorie diet and strength exercises.`;
-    else if(weightDiff < 0) weeklyGoal = `Goal: Lose ${Math.abs(weightDiff).toFixed(1)} kg this week. Focus on cardio and controlled diet.`;
-    else weeklyGoal = `Maintain your weight. Focus on balanced diet and workouts.`;
+glassContainer.onclick = () => {
+    if(filled >= TOTAL_GLASSES) return;
+    glassContainer.children[filled].classList.add("filled");
+    filled++;
+    localStorage.setItem("waterCount", filled);
+    updateWaterText();
+    waterPopup.style.opacity = "1";
+    waterPopup.style.animation = "floatUp 0.6s ease";
+    setTimeout(()=>{
+        waterPopup.style.opacity = "0";
+        waterPopup.style.animation = "";
+    },700);
+};
 
-    document.getElementById("weeklyGoal").innerText = weeklyGoal;
+/* 🏋️ WORKOUT */
+const workoutKey = "workout_" + today;
+const checks = document.querySelectorAll("#workoutPlan input");
+const workoutCountEl = document.getElementById("workoutCount");
 
-}else{
-    alert("No user data found! Please register first.");
-    window.location.href = "registration.html";
+// Load saved
+const saved = JSON.parse(localStorage.getItem(workoutKey)) || [];
+checks.forEach((c,i)=>c.checked=saved[i]||false);
+
+updateWorkout();
+drawWeeklyChart();
+
+function updateWorkout(){
+    let done=0, state=[];
+    checks.forEach(c=>{if(c.checked)done++; state.push(c.checked)});
+    workoutCountEl.innerText = done;
+    localStorage.setItem(workoutKey, JSON.stringify(state));
+    updateWeeklyProgress(done);
+    drawWeeklyChart();
+}
+
+/* 📊 WEEKLY CHART */
+function updateWeeklyProgress(doneToday){
+    let week = JSON.parse(localStorage.getItem("weeklyProgress")) || [0,0,0,0,0,0,0];
+    week.shift(); // remove oldest
+    week.push(doneToday); // today's completed workouts
+    localStorage.setItem("weeklyProgress", JSON.stringify(week));
+}
+
+function drawWeeklyChart(){
+    const ctx = weeklyChart.getContext("2d");
+    const data = JSON.parse(localStorage.getItem("weeklyProgress")) || [1,2,3,2,3,4,2];
+    ctx.clearRect(0,0,weeklyChart.width,weeklyChart.height);
+    data.forEach((v,i)=>{
+        const bw=30, sp=15;
+        const x=i*(bw+sp)+20;
+        const h=v*30;
+        ctx.fillStyle="#00eaff";
+        ctx.fillRect(x,weeklyChart.height-h-20,bw,h);
+        ctx.fillStyle="#fff";
+        ctx.fillText("D"+(i+1),x+6,weeklyChart.height-5);
+    });
 }
 </script>
-
 </body>
 </html>
+
