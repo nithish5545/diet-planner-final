@@ -4,52 +4,88 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 body {
     background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.container { width:100%; max-width:400px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; color:white; }
-input, button { width:100%; padding:10px; margin:10px 0; border-radius:8px; border:none; }
-button { background:#00eaff; color:#000; cursor:pointer; font-weight:bold; }
-button:hover { background:#00c4d1; }
+.container {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: none;
+    background: #00eaff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+button:hover {
+    background: #00c4d1;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
     <h2>Login</h2>
-    <input type="text" id="mobile" placeholder="Enter Mobile Number">
-    <button onclick="login()">Login</button>
-    <p style="text-align:center; margin-top:10px;">
-        New user? <a href="registration.html" style="color:#00eaff;">Register here</a>
+    <p style="margin-top:10px;">Secure login using OTP</p>
+
+    <button onclick="loginWithCognito()">Login with OTP</button>
+
+    <p style="margin-top:15px;">
+        New users can register during login
     </p>
 </div>
 
 <script>
-function login() {
-    let mobile = document.getElementById("mobile").value.trim();
-    const userData = JSON.parse(localStorage.getItem("userData"));
+/* ===== YOUR AWS COGNITO CONFIG (ALREADY CORRECTED) ===== */
 
-    if(!mobile){
-        alert("Enter mobile number to login");
-        return;
-    }
+// Cognito Hosted UI domain
+const cognitoDomain =
+  "eu-north-1-0vnrM5M9z.auth.eu-north-1.amazoncognito.com";
 
-    if(userData && userData.mobile === mobile){
-        alert("Login Successful! Welcome " + userData.name);
-        // Redirect to home page (create home.html next)
-        window.location.href = "home.html";
-    } else {
-        alert("User not found. Please register first.");
-    }
+// App Client ID (YOUR REAL ID)
+const clientId = "5rvcf4jpqgv2sckvmgj9jln9h7";
+
+// Callback URL (MUST MATCH COGNITO SETTINGS)
+const redirectUri =
+  "https://d84l1y8p4kdic.cloudfront.net/callback";
+
+// Login redirect
+function loginWithCognito() {
+    const loginUrl =
+        "https://" + cognitoDomain + "/login" +
+        "?response_type=code" +
+        "&client_id=" + clientId +
+        "&redirect_uri=" + encodeURIComponent(redirectUri) +
+        "&scope=openid+email+phone";
+
+    window.location.href = loginUrl;
 }
 </script>
 
 </body>
 </html>
+
+
