@@ -55,51 +55,12 @@ button:hover { background:#00c4d1; }
         Already a user? <a href="login.html" style="color:#00eaff;">Login here</a>
     </p>
 </div>
-
 <script>
-function calculateBMI() {
-    let weight = parseFloat(document.getElementById("weight").value);
-    let height = parseFloat(document.getElementById("height").value);
-
-    if(weight > 0 && height > 0){
-        let bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-        document.getElementById("bmi").value = bmi;
-        generateBMISuggestion(bmi);
-    } else {
-        document.getElementById("bmi").value = '';
-        document.getElementById("bmiSuggestion").innerText = '';
-    }
-}
-
-// Generate BMI suggestion
-function generateBMISuggestion(bmi) {
-    let suggestion = "";
-    if(bmi < 18.5) suggestion = "Underweight → Recommended: Weight Gain";
-    else if(bmi < 25) suggestion = "Normal → Maintain or Build Aesthetic Physique";
-    else if(bmi < 30) suggestion = "Overweight → Recommended: Weight Loss";
-    else suggestion = "Obese → Strongly Recommended: Weight Loss";
-
-    document.getElementById("bmiSuggestion").innerText = suggestion;
-}
-
-// Auto calculate BMI on weight or height change
-document.getElementById("weight").addEventListener("input", calculateBMI);
-document.getElementById("height").addEventListener("input", calculateBMI);
-
 function register() {
-    let name = document.getElementById("name").value.trim();
-    let mobile = document.getElementById("mobile").value.trim();
-    let email = document.getElementById("email").value.trim();
-
-    if(!name || !mobile || !email){
-        alert("Please fill name, mobile, and email.");
-        return;
-    }
-
     const userData = {
-        name: name,
-        mobile: mobile,
-        email: email,
+        name: document.getElementById("name").value.trim(),
+        mobile: document.getElementById("mobile").value.trim(),
+        email: document.getElementById("email").value.trim(),
         age: document.getElementById("age").value,
         weight: document.getElementById("weight").value,
         height: document.getElementById("height").value,
@@ -109,16 +70,47 @@ function register() {
         exercise: document.getElementById("exercise").value
     };
 
-    // Save in localStorage (temporary storage for demo)
-    localStorage.setItem("userData", JSON.stringify(userData));
+    if (!userData.name || !userData.mobile || !userData.email) {
+        alert("Please fill Name, Mobile, and Email");
+        return;
+    }
 
-    alert("Registration Successful!");
-    window.location.href = "login.html"; // Redirect to login page
+    fetch("http://127.0.0.1:5000/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+
+            /* 🔐 AUTO LOGIN SESSION */
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            alert("Registration successful! Welcome 🎉");
+            window.location.href = "home.html";   // 🔥 bypass login page
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => {
+        alert("Server error. Is Flask running?");
+        console.error(err);
+    });
 }
 </script>
 
+
+
 </body>
 </html>
+
+
+
+
 
 
 
