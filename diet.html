@@ -22,10 +22,12 @@ h2 { text-align:center; margin-bottom:20px; }
 select, button { padding:10px; margin-top:10px; border-radius:8px; border:none; }
 button { background:#00eaff; color:#000; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#00c4d1; }
-ul { list-style:none; margin-left:0; padding-left:0; }
-li { margin-bottom:8px; }
+ul { list-style:none; padding-left:0; }
+li { margin-bottom:12px; }
+.meal-img { width:150px; border-radius:10px; margin-top:8px; }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -33,16 +35,17 @@ li { margin-bottom:8px; }
 
     <div class="card">
         <h3>Filter Meals</h3>
-        <label for="country">Select Country:</label>
+
+        <label>Select Country:</label>
         <select id="country">
             <option value="">--Select--</option>
-            <option value="India">India</option>
-            <option value="USA">USA</option>
-            <option value="Italy">Italy</option>
-            <option value="Japan">Japan</option>
+            <option value="Indian">India</option>
+            <option value="American">USA</option>
+            <option value="Italian">Italy</option>
+            <option value="Japanese">Japan</option>
         </select>
 
-        <label for="diet">Diet Preference:</label>
+        <label>Diet Preference:</label>
         <select id="diet">
             <option value="">--Select--</option>
             <option value="Veg">Veg</option>
@@ -54,54 +57,76 @@ li { margin-bottom:8px; }
 
     <div class="card">
         <h3>Meals</h3>
-        <ul id="mealList">
-            <!-- Meals will appear here -->
-        </ul>
+        <ul id="mealList"></ul>
     </div>
 
     <button onclick="location.href='home.html'">Back to Home</button>
 </div>
 
 <script>
-// Sample meals data
-const mealsData = {
-    "India": {
-        "Veg": ["Paneer Butter Masala", "Dal Tadka", "Vegetable Biryani", "Chole"],
-        "Non-Veg": ["Chicken Curry", "Mutton Biryani", "Fish Fry", "Egg Curry"]
-    },
-    "USA": {
-        "Veg": ["Veggie Burger", "Caesar Salad", "Mac & Cheese", "Grilled Veg Sandwich"],
-        "Non-Veg": ["Burger with Beef", "BBQ Ribs", "Fried Chicken", "Steak"]
-    },
-    "Italy": {
-        "Veg": ["Margherita Pizza", "Pasta Primavera", "Caprese Salad", "Risotto Veg"],
-        "Non-Veg": ["Spaghetti Bolognese", "Chicken Alfredo", "Seafood Risotto", "Prosciutto Pizza"]
-    },
-    "Japan": {
-        "Veg": ["Vegetable Sushi", "Tofu Salad", "Veg Ramen", "Tempura Veggies"],
-        "Non-Veg": ["Sushi with Fish", "Chicken Teriyaki", "Beef Bowl", "Shrimp Tempura"]
-    }
-};
+const user = JSON.parse(localStorage.getItem("user"));
 
 function showMeals() {
     const country = document.getElementById("country").value;
     const diet = document.getElementById("diet").value;
     const mealList = document.getElementById("mealList");
 
-    mealList.innerHTML = "";
-
     if (!country || !diet) {
-        alert("Please select both country and diet preference");
+        alert("Please select country and diet preference");
         return;
     }
 
-    const meals = mealsData[country][diet];
+    mealList.innerHTML = "Loading meals...";
 
-    meals.forEach(meal => {
-        const li = document.createElement("li");
-        li.textContent = "• " + meal;
-        mealList.appendChild(li);
+    fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${country}`)
+    .then(res => res.json())
+    .then(data => {
+        mealList.innerHTML = "";
+
+        data.meals.slice(0, 6).forEach(meal => {
+
+            // simple veg / non-veg assumption
+            if (diet === "Veg" && meal.strMeal.toLowerCase().includes("chicken")) return;
+
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <strong>${meal.strMeal}</strong><br>
+                <img src="${meal.strMealThumb}" class="meal-img"><br>
+                <span id="cal-${meal.idMeal}">Calories: calculating...</span><br>
+                <button onclick="loadCalories('${meal.idMeal}')">View Calories</button>
+                <button onclick="saveMeal('${meal.strMeal}')">Save ❤️</button>
+            `;
+            mealList.appendChild(li);
+
+            loadCalories(meal.idMeal);
+        });
     });
+}
+
+function loadCalories(mealId) {
+    fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`)
+    .then(res => res.json())
+    .then(data => {
+        const ingredients = Object.keys(data.meals[0])
+            .filter(k => k.startsWith("strIngredient") && data.meals[0][k]);
+
+        const calories = ingredients.length * 40;
+        document.getElementById(`cal-${mealId}`).innerText =
+            "Calories: ~" + calories + " kcal";
+    });
+}
+
+function saveMeal(mealName) {
+    fetch("http://127.0.0.1:5000/save-meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            mobile: user.mobile,
+            meal: mealName
+        })
+    })
+    .then(res => res.json())
+    .then(() => alert("Meal saved ❤️"));
 }
 </script>
 
