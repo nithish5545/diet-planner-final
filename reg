@@ -1,0 +1,19 @@
+CREATE DATABASE health_app;
+USE health_app;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    mobile VARCHAR(15) UNIQUE NOT NULL,
+    email VARCHAR(100),
+    age INT,
+    weight FLOAT,
+    height FLOAT,
+    bmi FLOAT,
+    bmi_suggestion VARCHAR(255),
+    body_type VARCHAR(50),
+    exercise_level VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+A
