@@ -30,11 +30,47 @@ button:hover { background:#00c4d1; }
 <body>
 
 <div class="container">
+
     <h2>Welcome, <span id="userName">User</span>!</h2>
 
     <div class="card">
         <h3>Today's Goal</h3>
-        <div class="goal" id="todayGoal"></div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+
+            <!-- 🔥 Animated Progress Circle -->
+            <div id="progressCircle" style="
+                width:160px;
+                height:160px;
+                border-radius:50%;
+                background: conic-gradient(#00eaff 0deg, rgba(255,255,255,0.2) 0deg);
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
+                transition: all 0.6s ease;
+            ">
+                <h2 id="remainingCalories">0</h2>
+                <small>Remaining</small>
+            </div>
+
+            <!-- Details -->
+            <div>
+                <p><strong>Calories</strong></p>
+                <p style="font-size:13px;">Remaining = Goal - Food + Exercise</p>
+                <p>🏁 Base Goal: <strong id="baseGoal">0</strong></p>
+                <p>🍽 Food: <strong id="foodCalories">0</strong></p>
+                <p>🔥 Exercise: <strong id="exerciseCalories">0</strong></p>
+
+                <hr style="margin:10px 0;">
+
+                <p>💪 Protein: <strong id="homeProtein">0</strong> g</p>
+                <p>🍞 Carbs: <strong id="homeCarbs">0</strong> g</p>
+                <p>🥑 Fat: <strong id="homeFat">0</strong> g</p>
+            </div>
+
+        </div>
     </div>
 
     <div class="card">
@@ -47,16 +83,17 @@ button:hover { background:#00c4d1; }
         <button onclick="location.href='diet.html'">Diet Planning</button>
         <button onclick="logout()">Logout</button>
     </div>
+
 </div>
 
 <script>
-/* 🔐 AUTO LOGIN PROTECTION */
+
+/* 🔐 AUTO LOGIN CHECK */
 if (localStorage.getItem("isLoggedIn") !== "true") {
     alert("Please login first");
     window.location.href = "login.html";
 }
 
-/* 📦 GET USER DATA */
 const user = JSON.parse(localStorage.getItem("user"));
 
 if (!user) {
@@ -65,14 +102,50 @@ if (!user) {
     window.location.href = "login.html";
 }
 
-/* 👤 SHOW USER NAME */
 document.getElementById("userName").innerText = user.name;
 
-/* 🎯 TODAY GOAL */
-document.getElementById("todayGoal").innerText =
-    "Drink 2.5L water 💧 | Walk 8,000 steps 🚶 | Burn 400 kcal 🔥";
+/* ================= CALORIE SYSTEM ================= */
 
-/* 📅 WEEKLY GOAL */
+let baseGoal = 2530;
+const today = new Date().toISOString().split("T")[0];
+
+let foodCalories =
+    Number(localStorage.getItem("foodCalories_" + today)) || 0;
+
+let exerciseCalories =
+    Number(localStorage.getItem("exerciseCalories")) || 0;
+
+// 🔥 Load Macros
+let protein =
+    Number(localStorage.getItem("protein_" + today)) || 0;
+
+let carbs =
+    Number(localStorage.getItem("carbs_" + today)) || 0;
+
+let fat =
+    Number(localStorage.getItem("fat_" + today)) || 0;
+
+let remaining = baseGoal - foodCalories + exerciseCalories;
+
+// Update UI
+document.getElementById("baseGoal").innerText = baseGoal;
+document.getElementById("foodCalories").innerText = foodCalories.toFixed(2);
+document.getElementById("exerciseCalories").innerText = exerciseCalories.toFixed(2);
+document.getElementById("remainingCalories").innerText = remaining.toFixed(2);
+
+document.getElementById("homeProtein").innerText = protein.toFixed(2);
+document.getElementById("homeCarbs").innerText = carbs.toFixed(2);
+document.getElementById("homeFat").innerText = fat.toFixed(2);
+
+/* 🔥 Animate Progress Circle */
+
+let percent = Math.min((foodCalories / baseGoal) * 100, 100);
+let degrees = percent * 3.6;
+
+document.getElementById("progressCircle").style.background =
+    `conic-gradient(#00eaff ${degrees}deg, rgba(255,255,255,0.2) ${degrees}deg)`;
+
+/* 📅 Weekly Message */
 document.getElementById("weeklyGoal").innerText =
     "Follow diet plan & exercise regularly for steady progress 💪";
 
@@ -82,8 +155,8 @@ function logout() {
     alert("Logged out successfully");
     window.location.href = "login.html";
 }
+
 </script>
 
 </body>
 </html>
-
