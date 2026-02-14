@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diet Planning</title>
+
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
 body {
@@ -31,47 +32,310 @@ li { margin-bottom:12px; }
 <body>
 
 <div class="container">
-    <h2>Diet Planning</h2>
 
-    <div class="card">
-        <h3>Filter Meals</h3>
+<h2>Diet Planning</h2>
 
-        <label>Select Country:</label>
-        <select id="country">
-            <option value="">--Select--</option>
-            <option value="Indian">India</option>
-            <option value="American">USA</option>
-            <option value="Italian">Italy</option>
-            <option value="Japanese">Japan</option>
-        </select>
+<div class="card">
+    <h3>Filter Meals</h3>
 
-        <label>Diet Preference:</label>
-        <select id="diet">
-            <option value="">--Select--</option>
-            <option value="Veg">Veg</option>
-            <option value="Non-Veg">Non-Veg</option>
-        </select>
+    <label>Select Country:</label>
+    <select id="country">
+        <option value="">--Select--</option>
+        <option value="Indian">Indian</option>
+        <option value="American">American</option>
+        <option value="Italian">Italian</option>
+        <option value="Japanese">Japanese</option>
+    </select>
 
-        <button onclick="showMeals()">Show Meals</button>
-    </div>
+    <label>Diet Preference:</label>
+    <select id="diet">
+        <option value="">--Select--</option>
+        <option value="Veg">Veg</option>
+        <option value="Non-Veg">Non-Veg</option>
+    </select>
 
-    <div class="card">
-        <h3>Meals</h3>
-        <ul id="mealList"></ul>
-    </div>
+    <button onclick="showMeals()">Show Meals</button>
+</div>
 
-    <button onclick="location.href='home.html'">Back to Home</button>
+<div class="card">
+
+<h3>Meals</h3>
+
+<hr>
+<h4>Search Recipes (MealDB)</h4>
+<input type="text" id="recipeSearch" placeholder="Search recipe name">
+<button onclick="searchRecipe()">Search Recipe</button>
+<ul id="recipeResults"></ul>
+
+<hr>
+<h4>Search & Add Food (From CSV)</h4>
+<input type="text" id="searchFood" placeholder="Search food by name">
+<button onclick="searchFood()">Search</button>
+<ul id="searchResults"></ul>
+
+<hr>
+<h4>Added Foods</h4>
+<ul id="addedFoods"></ul>
+
+<h3>Total Calories: <span id="totalCalories">0</span> kcal</h3>
+<h4 id="macroTotals">
+Protein: 0g | Carbs: 0g | Fat: 0g
+</h4>
+
+<button onclick="clearFoods()">Clear All</button>
+
+<hr>
+<ul id="mealList"></ul>
+
+</div>
+
+<button onclick="location.href='home.html'">Back to Home</button>
+
 </div>
 
 <script>
-const user = JSON.parse(localStorage.getItem("user"));
 
-function showMeals() {
+/* ================= GLOBAL VARIABLES ================= */
+
+var mealData = [];
+var totalCalories = 0;
+var totalProtein = 0;
+var totalCarbs = 0;
+var totalFat = 0;
+
+/* ================= LOAD CSV ================= */
+
+window.onload = function(){
+
+fetch("optimized_meals.csv")
+.then(res => res.text())
+.then(text => {
+
+    const lines = text.split(/\r?\n/);
+
+    for(let i=1;i<lines.length;i++){
+
+        if(!lines[i]) continue;
+
+        let parts = lines[i].split(",");
+
+        if(parts.length < 5) continue;
+
+        mealData.push({
+            name: parts[0].replace(/"/g,"").trim(),
+            calories: parseFloat(parts[1]) || 0,
+            protein: parseFloat(parts[2]) || 0,
+            carbs: parseFloat(parts[3]) || 0,
+            fat: parseFloat(parts[4]) || 0
+        });
+    }
+
+    console.log("CSV Loaded:", mealData.length);
+});
+};
+
+
+/* ================= UPDATE TOTALS ================= */
+
+function updateTotals(){
+
+    const today = new Date().toISOString().split("T")[0];
+
+    document.getElementById("totalCalories").innerText =
+        totalCalories.toFixed(2);
+
+    document.getElementById("macroTotals").innerHTML =
+        `Protein: ${totalProtein.toFixed(2)}g |
+         Carbs: ${totalCarbs.toFixed(2)}g |
+         Fat: ${totalFat.toFixed(2)}g`;
+
+    localStorage.setItem("foodCalories_" + today, totalCalories.toFixed(2));
+    localStorage.setItem("protein_" + today, totalProtein.toFixed(2));
+    localStorage.setItem("carbs_" + today, totalCarbs.toFixed(2));
+    localStorage.setItem("fat_" + today, totalFat.toFixed(2));
+}
+
+
+/* ================= SEARCH CSV ================= */
+
+function searchFood(){
+
+    const query = document.getElementById("searchFood").value.toLowerCase().trim();
+    const resultList = document.getElementById("searchResults");
+    resultList.innerHTML = "";
+
+    if(!query){
+        resultList.innerHTML = "Enter food name";
+        return;
+    }
+
+    const results = mealData.filter(f =>
+        f.name.toLowerCase().includes(query)
+    );
+
+    if(results.length === 0){
+        resultList.innerHTML = "No food found";
+        return;
+    }
+
+    results.slice(0,10).forEach(food => {
+
+        const safeId = food.name.replace(/[^a-zA-Z0-9]/g,"");
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+        <strong>${food.name}</strong><br>
+        Calories per 100g: ${food.calories}<br>
+        Protein: ${food.protein}g |
+        Carbs: ${food.carbs}g |
+        Fat: ${food.fat}g<br>
+        Quantity (grams):
+        <input type="number" id="qty-${safeId}" value="100" min="1"><br>
+        <button onclick="addFood('${safeId}')">Add</button>
+        <hr>`;
+
+        resultList.appendChild(li);
+    });
+}
+
+
+/* ================= ADD FOOD ================= */
+
+function addFood(id){
+
+    const food = mealData.find(f =>
+        f.name.replace(/[^a-zA-Z0-9]/g,"") === id
+    );
+
+    if(!food) return;
+
+    const qty = parseFloat(document.getElementById(`qty-${id}`).value);
+
+    const cal = (food.calories/100)*qty;
+    const protein = (food.protein/100)*qty;
+    const carbs = (food.carbs/100)*qty;
+    const fat = (food.fat/100)*qty;
+
+    totalCalories += cal;
+    totalProtein += protein;
+    totalCarbs += carbs;
+    totalFat += fat;
+
+    updateTotals();
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+    ${food.name} (${qty}g) - ${cal.toFixed(2)} kcal
+    <button onclick="removeFood(this, ${cal}, ${protein}, ${carbs}, ${fat})">Remove</button>`;
+
+    document.getElementById("addedFoods").appendChild(li);
+}
+
+
+/* ================= REMOVE ================= */
+
+function removeFood(btn, cal, protein, carbs, fat){
+
+    btn.parentElement.remove();
+
+    totalCalories -= cal;
+    totalProtein -= protein;
+    totalCarbs -= carbs;
+    totalFat -= fat;
+
+    updateTotals();
+}
+
+
+/* ================= CLEAR ================= */
+
+function clearFoods(){
+
+    const today = new Date().toISOString().split("T")[0];
+
+    document.getElementById("addedFoods").innerHTML = "";
+
+    totalCalories = 0;
+    totalProtein = 0;
+    totalCarbs = 0;
+    totalFat = 0;
+
+    updateTotals();
+
+    localStorage.setItem("foodCalories_" + today, 0);
+    localStorage.setItem("protein_" + today, 0);
+    localStorage.setItem("carbs_" + today, 0);
+    localStorage.setItem("fat_" + today, 0);
+}
+
+
+/* ================= MEALDB SEARCH ================= */
+
+function searchRecipe(){
+
+    const query = document.getElementById("recipeSearch").value;
+    const resultList = document.getElementById("recipeResults");
+
+    resultList.innerHTML = "Searching...";
+
+    fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`)
+    .then(res => res.json())
+    .then(data => {
+
+        resultList.innerHTML = "";
+
+        if(!data.meals){
+            resultList.innerHTML = "No recipes found";
+            return;
+        }
+
+        data.meals.slice(0,5).forEach(meal => {
+
+            const li = document.createElement("li");
+            li.innerHTML = `
+            <strong>${meal.strMeal}</strong><br>
+            <img src="${meal.strMealThumb}" class="meal-img"><br>
+            <button onclick="addRecipeEstimate('${meal.strMeal.replace(/'/g,"")}')">
+            Add (Estimate 400 kcal)
+            </button><hr>`;
+
+            resultList.appendChild(li);
+        });
+    });
+}
+
+function addRecipeEstimate(name){
+
+    const cal = 400;
+    const protein = 15;
+    const carbs = 40;
+    const fat = 20;
+
+    totalCalories += cal;
+    totalProtein += protein;
+    totalCarbs += carbs;
+    totalFat += fat;
+
+    updateTotals();
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+    ${name} (Recipe Estimate) - ${cal} kcal
+    <button onclick="removeFood(this, ${cal}, ${protein}, ${carbs}, ${fat})">Remove</button>`;
+
+    document.getElementById("addedFoods").appendChild(li);
+}
+
+
+/* ================= FILTER ================= */
+
+function showMeals(){
+
     const country = document.getElementById("country").value;
     const diet = document.getElementById("diet").value;
     const mealList = document.getElementById("mealList");
 
-    if (!country || !diet) {
+    if(!country || !diet){
         alert("Please select country and diet preference");
         return;
     }
@@ -81,53 +345,29 @@ function showMeals() {
     fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${country}`)
     .then(res => res.json())
     .then(data => {
+
         mealList.innerHTML = "";
 
-        data.meals.slice(0, 6).forEach(meal => {
+        if(!data.meals){
+            mealList.innerHTML = "No meals found";
+            return;
+        }
 
-            // simple veg / non-veg assumption
-            if (diet === "Veg" && meal.strMeal.toLowerCase().includes("chicken")) return;
+        data.meals.slice(0,6).forEach(meal => {
+
+            if(diet === "Veg" && meal.strMeal.toLowerCase().includes("chicken"))
+                return;
 
             const li = document.createElement("li");
             li.innerHTML = `
-                <strong>${meal.strMeal}</strong><br>
-                <img src="${meal.strMealThumb}" class="meal-img"><br>
-                <span id="cal-${meal.idMeal}">Calories: calculating...</span><br>
-                <button onclick="loadCalories('${meal.idMeal}')">View Calories</button>
-                <button onclick="saveMeal('${meal.strMeal}')">Save ❤️</button>
-            `;
-            mealList.appendChild(li);
+            <strong>${meal.strMeal}</strong><br>
+            <img src="${meal.strMealThumb}" class="meal-img"><br>`;
 
-            loadCalories(meal.idMeal);
+            mealList.appendChild(li);
         });
     });
 }
 
-function loadCalories(mealId) {
-    fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`)
-    .then(res => res.json())
-    .then(data => {
-        const ingredients = Object.keys(data.meals[0])
-            .filter(k => k.startsWith("strIngredient") && data.meals[0][k]);
-
-        const calories = ingredients.length * 40;
-        document.getElementById(`cal-${mealId}`).innerText =
-            "Calories: ~" + calories + " kcal";
-    });
-}
-
-function saveMeal(mealName) {
-    fetch("http://127.0.0.1:5000/save-meal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            mobile: user.mobile,
-            meal: mealName
-        })
-    })
-    .then(res => res.json())
-    .then(() => alert("Meal saved ❤️"));
-}
 </script>
 
 </body>
