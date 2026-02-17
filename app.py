@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
@@ -93,11 +94,17 @@ def save_meal():
     try:
         cursor = db.cursor()
         cursor.execute("""
-            INSERT INTO favorite_meals (user_mobile, meal_name)
-            VALUES (%s, %s)
+            INSERT INTO meals 
+            (user_mobile, meal_type, meal_name, calories, protein, carbs, fat, date)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,CURDATE())
         """, (
             data.get("mobile"),
-            data.get("meal")
+            data.get("meal_type"),
+            data.get("meal_name"),
+            data.get("calories"),
+            data.get("protein"),
+            data.get("carbs"),
+            data.get("fat")
         ))
 
         db.commit()
@@ -105,7 +112,7 @@ def save_meal():
 
         return jsonify({
             "status": "success",
-            "message": "Meal saved"
+            "message": "Meal saved successfully"
         })
 
     except Exception as e:
@@ -114,6 +121,58 @@ def save_meal():
             "status": "fail",
             "message": "Failed to save meal"
         }), 500
+
+# -------- SEARCH FOOD API --------
+@app.route("/search-food", methods=["POST"])
+def search_food():
+    data = request.json
+    query = data.get("food")
+
+    url = "https://api.spoonacular.com/recipes/complexSearch"
+
+    params = {
+        "query": query,
+        "number": 1,
+        "apiKey": SPOONACULAR_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+    result = response.json()
+
+    if not result.get("results"):
+        return jsonify({"status": "fail", "message": "Food not found"})
+
+    recipe = result["results"][0]
+
+    recipe_id = recipe["id"]
+    title = recipe["title"]
+    image = recipe["image"]
+
+    # Get nutrition
+    nutrition_url = f"https://api.spoonacular.com/recipes/{recipe_id}/information"
+
+    nutrition_params = {
+        "includeNutrition": True,
+        "apiKey": SPOONACULAR_API_KEY
+    }
+
+    nutrition_response = requests.get(nutrition_url, params=nutrition_params)
+    nutrition_data = nutrition_response.json()
+
+    nutrients = nutrition_data["nutrition"]["nutrients"]
+
+    nutrition_info = {}
+
+    for n in nutrients:
+        if n["name"] in ["Calories", "Protein", "Carbohydrates", "Fat"]:
+            nutrition_info[n["name"]] = n["amount"]
+
+    return jsonify({
+        "status": "success",
+        "title": title,
+        "image": image,
+        "nutrition": nutrition_info
+    })
 
 # -------- START SERVER --------
 if __name__ == "__main__":
