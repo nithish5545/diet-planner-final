@@ -4,26 +4,148 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home</title>
-
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
-body {
-    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-    color:white;
+
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
 }
-.container { width:100%; max-width:600px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; }
-h2 { text-align:center; margin-bottom:20px; }
-.card { background: rgba(255,255,255,0.15); padding:20px; margin:15px 0; border-radius:10px; }
-.card h3 { margin-bottom:10px; }
-.buttons { display:flex; justify-content:space-around; margin-top:20px; flex-wrap:wrap; gap:10px; }
-button { padding:15px; border:none; border-radius:10px; cursor:pointer; background:#00eaff; color:#000; font-weight:bold; transition:0.3s; }
-button:hover { background:#00c4d1; }
-.goal { background: rgba(255,255,255,0.2); padding:15px; margin-top:10px; border-radius:10px; }
+
+/* ===== BODY ===== */
+body {
+    background: #0f172a;
+    display: flex;
+    min-height: 100vh;
+    color: #e2e8f0;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 240px;
+    background: #111827;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: #00eaff;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #cbd5e1;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: #1f2937;
+    color: #00eaff;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+    flex: 1;
+    padding: 30px;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.topbar h1 {
+    font-size: 24px;
+}
+
+/* ===== CARD GRID ===== */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* ===== STATS CARD ===== */
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0,234,255,0.2);
+}
+
+.card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #94a3b8;
+}
+
+.card p {
+    font-size: 22px;
+    font-weight: bold;
+    color: #00eaff;
+}
+
+/* ===== BUTTON ===== */
+button {
+    background: #00eaff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00c4d1;
+}
+
+/* ===== INPUT ===== */
+input, select {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+    width: 100%;
+    background: #334155;
+    color: white;
+}
+
+/* ===== TABLE STYLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background: #1f2937;
+}
+
+tr:nth-child(even) {
+    background: #1e293b;
+}
 </style>
 </head>
 
