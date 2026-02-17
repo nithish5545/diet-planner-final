@@ -1,60 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+
+/* ===== BODY ===== */
 body {
-    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    font-family: "Segoe UI", sans-serif;
 }
-.container {
-    width:100%;
-    max-width:400px;
-    background: rgba(255,255,255,0.1);
-    padding:30px;
-    border-radius:15px;
-    color:white;
+
+/* ===== LOGIN CARD ===== */
+.login-card {
+    width: 350px;
+    background: #1e293b;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0,234,255,0.2);
+    text-align: center;
 }
-input, button {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:8px;
-    border:none;
+
+/* ===== TITLE ===== */
+.login-card h2 {
+    color: #00eaff;
+    margin-bottom: 25px;
 }
-button {
-    background:#00eaff;
-    color:#000;
-    cursor:pointer;
-    font-weight:bold;
+
+/* ===== INPUT ===== */
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #334155;
+    color: white;
+    margin-bottom: 20px;
+    transition: 0.3s;
 }
-button:hover {
-    background:#00c4d1;
+
+.login-card input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0,234,255,0.6);
 }
+
+/* ===== BUTTON ===== */
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #00eaff;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-card button:hover {
+    background: #00c4d1;
+}
+
+/* ===== LINK ===== */
+.login-card p {
+    margin-top: 20px;
+    color: #cbd5e1;
+}
+
+.login-card a {
+    color: #00eaff;
+    text-decoration: none;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>Login</h2>
+<div class="login-card">
 
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="text" id="mobile" placeholder="Mobile Number" required>
+<h2>Login</h2>
 
-    <button onclick="login()">Login</button>
+<input type="text" placeholder="Enter Mobile Number">
 
-    <p style="text-align:center; margin-top:10px;">
-        New user? <a href="registration.html" style="color:#00eaff;">Register here</a>
-    </p>
+<button>Login</button>
+
+<p>New user? <a href="registration.html">Register here</a></p>
+
 </div>
 <script>
 if (localStorage.getItem("isLoggedIn") === "true") {
@@ -109,7 +147,3 @@ function login() {
 
 </body>
 </html>
-
-
-
-
