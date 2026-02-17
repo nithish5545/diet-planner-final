@@ -5,62 +5,225 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registration</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: Arial,sans-serif; }
+/* ===== BODY ===== */
 body {
-    background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #3b3b3b);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: "Segoe UI", sans-serif;
+    color: white;
 }
-.container { width:100%; max-width:400px; background: rgba(255,255,255,0.1); padding:30px; border-radius:15px; color:white; }
-input, select, button {
-    width:100%; padding:10px; margin:10px 0; border-radius:8px; border:none;
+
+/* ===== CONTAINER ===== */
+.register-container {
+    width: 700px;
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0,234,255,0.2);
 }
-button { background:#00eaff; color:#000; cursor:pointer; font-weight:bold; }
-button:hover { background:#00c4d1; }
-.suggestion { background: rgba(255,255,255,0.15); padding:10px; border-radius:8px; text-align:center; color:#fff; margin-top:-5px; }
+
+/* ===== TITLE ===== */
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00eaff;
+}
+
+/* ===== FORM GRID ===== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* ===== INPUT GROUP ===== */
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.input-group input,
+.input-group select {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #334155;
+    color: white;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0,234,255,0.6);
+}
+
+/* ===== FULL WIDTH ELEMENT ===== */
+.full-width {
+    grid-column: span 2;
+}
+
+/* ===== BUTTON ===== */
+button {
+    margin-top: 20px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #00eaff;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00c4d1;
+}
+
+/* ===== LOGIN LINK ===== */
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-link a {
+    color: #00eaff;
+    text-decoration: none;
+}
+
 </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Register</h2>
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="text" id="mobile" placeholder="Mobile Number" required>
-    <input type="email" id="email" placeholder="Email Address" required>
-    <input type="number" id="age" placeholder="Age">
-    <input type="number" id="weight" placeholder="Weight (kg)">
-    <input type="number" id="height" placeholder="Height (cm)">
-    <input type="number" id="bmi" placeholder="BMI" readonly>
-    <div class="suggestion" id="bmiSuggestion"></div>
-    <select id="bodyType">
-        <option value="">Select Body Type</option>
-        <option>Aesthetic</option>
-        <option>Bodybuilding</option>
-        <option>Strength Gain</option>
-        <option>Weight Loss</option>
-        <option>Weight Gain</option>
-        <option>Mens Physique</option>
-    </select>
-    <select id="exercise">
-        <option value="">Select Exercise Level</option>
-        <option>Light</option>
-        <option>Moderate</option>
-        <option>Heavy</option>
-    </select>
-    <button onclick="register()">Register</button>
-    <p style="text-align:center; margin-top:10px;">
-        Already a user? <a href="login.html" style="color:#00eaff;">Login here</a>
-    </p>
+<div class="register-container">
+
+<h2>Create Account</h2>
+
+<form>
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" placeholder="Enter full name">
 </div>
+
+<div class="input-group">
+<label>Mobile Number</label>
+<input type="text" placeholder="Enter mobile number">
+</div>
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" placeholder="Enter email">
+</div>
+
+<div class="input-group">
+<label>Age</label>
+<input type="number" placeholder="Enter age">
+</div>
+
+<div class="input-group">
+<label>Weight (kg)</label>
+<input type="number" placeholder="Enter weight">
+</div>
+
+<div class="input-group">
+<label>Height (cm)</label>
+<input type="number" placeholder="Enter height">
+</div>
+
+<div class="input-group">
+<label>BMI</label>
+<input type="text" placeholder="Auto calculated">
+</div>
+
+<div class="input-group">
+<label>Body Type</label>
+<select>
+<option>Select Body Type</option>
+<option>Underweight</option>
+<option>Normal</option>
+<option>Overweight</option>
+</select>
+</div>
+
+<div class="input-group full-width">
+<label>Exercise Level</label>
+<select>
+<option>Select Exercise Level</option>
+<option>Beginner</option>
+<option>Intermediate</option>
+<option>Advanced</option>
+</select>
+</div>
+
+</div>
+
+<button type="submit">Register</button>
+
+<div class="login-link">
+Already a user? <a href="login.html">Login here</a>
+</div>
+
+</form>
+
+</div>
+
 <script>
+function calculateBMI() {
+    let weight = parseFloat(document.getElementById("weight").value);
+    let height = parseFloat(document.getElementById("height").value);
+
+    if(weight > 0 && height > 0){
+        let bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+        document.getElementById("bmi").value = bmi;
+        generateBMISuggestion(bmi);
+    } else {
+        document.getElementById("bmi").value = '';
+        document.getElementById("bmiSuggestion").innerText = '';
+    }
+}
+
+// Generate BMI suggestion
+function generateBMISuggestion(bmi) {
+    let suggestion = "";
+    if(bmi < 18.5) suggestion = "Underweight → Recommended: Weight Gain";
+    else if(bmi < 25) suggestion = "Normal → Maintain or Build Aesthetic Physique";
+    else if(bmi < 30) suggestion = "Overweight → Recommended: Weight Loss";
+    else suggestion = "Obese → Strongly Recommended: Weight Loss";
+
+    document.getElementById("bmiSuggestion").innerText = suggestion;
+}
+
+// Auto calculate BMI on weight or height change
+document.getElementById("weight").addEventListener("input", calculateBMI);
+document.getElementById("height").addEventListener("input", calculateBMI);
+
 function register() {
+    let name = document.getElementById("name").value.trim();
+    let mobile = document.getElementById("mobile").value.trim();
+    let email = document.getElementById("email").value.trim();
+
+    if(!name || !mobile || !email){
+        alert("Please fill name, mobile, and email.");
+        return;
+    }
+
     const userData = {
-        name: document.getElementById("name").value.trim(),
-        mobile: document.getElementById("mobile").value.trim(),
-        email: document.getElementById("email").value.trim(),
+        name: name,
+        mobile: mobile,
+        email: email,
         age: document.getElementById("age").value,
         weight: document.getElementById("weight").value,
         height: document.getElementById("height").value,
@@ -70,55 +233,15 @@ function register() {
         exercise: document.getElementById("exercise").value
     };
 
-    if (!userData.name || !userData.mobile || !userData.email) {
-        alert("Please fill Name, Mobile, and Email");
-        return;
-    }
+    // Save in localStorage (temporary storage for demo)
+    localStorage.setItem("userData", JSON.stringify(userData));
 
-    fetch("http://127.0.0.1:5000/register", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(userData)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-
-            /* 🔐 AUTO LOGIN SESSION */
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("user", JSON.stringify(userData));
-
-            alert("Registration successful! Welcome 🎉");
-            window.location.href = "home.html";   // 🔥 bypass login page
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(err => {
-        alert("Server error. Is Flask running?");
-        console.error(err);
-    });
+    alert("Registration Successful!");
+    window.location.href = "login.html"; // Redirect to login page
 }
 </script>
 
-
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
